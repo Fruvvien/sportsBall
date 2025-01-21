@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { PlayerService } from './player.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
@@ -9,7 +9,12 @@ export class PlayerController {
 
   @Post()
   create(@Body() createPlayerDto: CreatePlayerDto) {
-    return this.playerService.create(createPlayerDto);
+    try {
+      return this.playerService.create(createPlayerDto);
+    }
+    catch {
+      throw new Error("nem létezik ilyen id-jú csapat")
+    }
   }
 
   @Get()
@@ -18,17 +23,33 @@ export class PlayerController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.playerService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const player = await this.playerService.findOne(+id);
+    if (player == null){
+      throw new NotFoundException("nincs ilyen id-val rendelkező játékos")
+    }
+    return player;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlayerDto: UpdatePlayerDto) {
-    return this.playerService.update(+id, updatePlayerDto);
+  async update(@Param('id') id: string, @Body() updatePlayerDto: UpdatePlayerDto) {
+    try {
+      const updatedPlayer = await this.playerService.update(+id, updatePlayerDto);
+      return updatedPlayer;
+    }
+    catch {
+      throw new NotFoundException("nem sikerült felülírni")
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playerService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      const playerToRemove = await this.playerService.remove(+id);
+      return playerToRemove;
+    }
+    catch {
+      throw new NotFoundException("nem sikerült törölni")
+    }
   }
 }

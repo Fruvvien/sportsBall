@@ -17,6 +17,11 @@ export class TeamController {
     return this.teamService.findAll();
   }
 
+  @Get()
+  findAllWithPlayers() {
+    return this.teamService.returnAllPlayer();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.teamService.findOne(+id);
@@ -25,6 +30,11 @@ export class TeamController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
     return this.teamService.update(+id, updateTeamDto);
+  }
+
+  @Patch(':teamId/addPlayerToTeam/:playerId')
+  addPlayerToTeam(@Param('teamId') teamId: string, @Param('playerId') playerId: string) {
+    return this.teamService.addPlayerToTeam(+teamId, +playerId);
   }
 
   @Delete(':id')

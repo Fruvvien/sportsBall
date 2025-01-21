@@ -13,18 +13,39 @@ export class TeamService {
   }
 
   findAll() {
-    return `This action returns all team`;
+    return this.db.team.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} team`;
+    return this.db.team.findUnique({where: {id: id}});
   }
 
   update(id: number, updateTeamDto: UpdateTeamDto) {
-    return `This action updates a #${id} team`;
+    return this.db.team.update({where: {id: id}, data: updateTeamDto});
+  }
+
+
+  addPlayerToTeam(teamId: number, playerId: number) {
+      return this.db.team.update({
+        where: {id: teamId},
+        data: {
+          players: {
+            connect: {id: playerId}
+          }},
+
+      })
+
+  }
+
+  returnAllPlayer(){
+    return this.db.team.findMany({
+      include: {
+        players: true
+      }
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} team`;
+    return this.db.team.delete({where: {id: id}});
   }
 }
