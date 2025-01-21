@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root@localhost:3306/sportsBall"
+  url      = env("DATABASE_URL")
 }
 
 
